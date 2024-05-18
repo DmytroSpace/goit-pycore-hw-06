@@ -25,8 +25,12 @@ class Record:                                                   # present contac
     def add_phone(self, phone):                                 
         self.phones.append(Phone(phone))
 
-    def remove_phone(self, phone):
-        self.phones.remove(phone)
+    def remove_phone(self, phone_number: str):
+        for phone in self.phones:
+            if phone.value == phone_number:
+                self.phones.remove(phone)
+                return
+        raise ValueError("Phone number not found")
 
     def edit_phone(self, old_phone, new_phone):                 # replace old_phone to new_phone
         phone_to_edit = self.find_phone(old_phone)
@@ -121,6 +125,7 @@ def main():
             break
         elif command == "hello":
             print("How can I help you?")
+
         elif command == "add":
             if len(args) < 2:
                 print("Give me name and phone please.")
@@ -129,12 +134,14 @@ def main():
             else:
                 name, phone = args
                 print(add_contact(address_book, name, phone))
+
         elif command == "change":
             if len(args) < 3:
                 print("Give me name, old phone, and new phone please.")
             else:
                 name, old_phone, new_phone = args
                 print(change_contact(address_book, name, old_phone, new_phone))
+
         elif command == "phone":
             if len(args) < 1:
                 print("Enter the name for the command")
@@ -145,10 +152,23 @@ def main():
                     print(f'Phone number for contact {name}: {result}')
                 else:
                     print('Contact not found.')
+
+        elif command == "remove":
+            if len(args) < 1:
+                print("Enter the name for the command 'remove'")
+            else:
+                name = args[0]
+                try:
+                    address_book.delete(name)
+                    print(f"Contact '{name}' removed.")
+                except KeyError:
+                    print(f"Contact '{name}' not found.")
+
         elif command == "all":
-            print(show_all(address_book))
-        else:
-            print("Invalid command.")
+            if not address_book:
+                print("Contact list is empty")
+            else:
+                print(show_all(address_book))
 
 if __name__ == "__main__":
     main()
